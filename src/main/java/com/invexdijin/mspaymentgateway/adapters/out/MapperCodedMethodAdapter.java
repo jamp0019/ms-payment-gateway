@@ -15,9 +15,7 @@ public class MapperCodedMethodAdapter implements MapperCodedMethodOutPort {
     @Override
     public PayResponse mappingResponse(String preferenceId) {
 
-        return PayResponse.builder()
-                //.preferenceId(preferenceId)
-                .build();
+        return null;
     }
 
     @Override

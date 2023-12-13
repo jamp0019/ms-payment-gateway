@@ -2,6 +2,8 @@ package com.invexdijin.mspaymentgateway.application.core.domain;
 
 import lombok.Data;
 
+import java.util.UUID;
+
 @Data
 public class PayRequest {
 
@@ -18,5 +20,9 @@ public class PayRequest {
     private String buyerEmail;
     private String responseUrl;
     private String confirmationUrl;
+
+    public PayRequest(){
+        this.referenceCode= String.valueOf(UUID.randomUUID());
+    }
 
 }

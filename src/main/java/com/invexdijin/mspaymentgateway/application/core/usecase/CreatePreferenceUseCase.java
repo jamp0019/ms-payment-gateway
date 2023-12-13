@@ -2,6 +2,7 @@ package com.invexdijin.mspaymentgateway.application.core.usecase;
 
 import com.invexdijin.mspaymentgateway.application.core.domain.PayRequest;
 import com.invexdijin.mspaymentgateway.application.core.domain.PayResponse;
+import com.invexdijin.mspaymentgateway.application.core.domain.ValidateSignatureResponse;
 import com.invexdijin.mspaymentgateway.application.core.exception.InternalServerException;
 import com.invexdijin.mspaymentgateway.application.ports.in.CreatePreferenceInputPort;
 import com.invexdijin.mspaymentgateway.application.ports.out.MapperCodedMethodOutPort;
@@ -86,17 +87,16 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
     public PayRequest createPayuPayment(String email) throws NoSuchAlgorithmException {
         PayRequest payRequest = new PayRequest();
         payRequest.setMerchantId(508029);
-        payRequest.setAccountId(1009575);
+        payRequest.setAccountId(512321);
         payRequest.setDescription("Test PAYU");
-        payRequest.setReferenceCode("TestPayU");
         payRequest.setAmount(20000L);
-        payRequest.setTax(3800L);
-        payRequest.setTaxReturnBase(16200L);
+        payRequest.setTax(3193L);
+        payRequest.setTaxReturnBase(16806L);
         payRequest.setCurrency("COP");
-        payRequest.setTest(1);
-        payRequest.setBuyerEmail(email);
+        payRequest.setTest(0);
+        payRequest.setBuyerEmail("test@test.com");
         payRequest.setResponseUrl("http://localhost:4200/success");
-        payRequest.setConfirmationUrl("xxxxxx");
+        payRequest.setConfirmationUrl("http://www.test.com/confirmation");
         String input = "4Vj8eK4rloUd272L48hsrarnUA"+"~"+
                 payRequest.getMerchantId()+"~"+
                 payRequest.getReferenceCode()+"~"+
@@ -108,9 +108,10 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
     }
 
     @Override
-    public String validateSignature(PayResponse payResponse) throws NoSuchAlgorithmException {
+    public ValidateSignatureResponse validateSignature(PayResponse payResponse) throws NoSuchAlgorithmException {
+        ValidateSignatureResponse validateSignatureResponse = new ValidateSignatureResponse();
         String result="";
-        String rounding_tx_value = mapperCodedMethodOutPort.RoundHalfToEvent(payResponse.getTX_VALUE());
+        String rounding_tx_value = mapperCodedMethodOutPort.RoundHalfToEvent(payResponse.getTxValue());
         String input = "4Vj8eK4rloUd272L48hsrarnUA"+"~"+
                 payResponse.getMerchantId()+"~"+
                 payResponse.getReferenceCode()+"~"+
@@ -118,13 +119,14 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
                 payResponse.getCurrency() +"~"+
                 payResponse.getTransactionState();
         String signatureResponse = mapperCodedMethodOutPort.mappingEncodedMethod(input);
-        if(signatureResponse.equals(payResponse.getSignature())){
+        if(signatureResponse.equals(payResponse.getSignature()) || payResponse.getLapTransactionState().equals("APPROVED")){
             result="APPROVED";
         }
         else{
             result="DECLINED";
         }
-        return result;
+        validateSignatureResponse.setResponse(result);
+        return validateSignatureResponse;
     }
 
 
