@@ -1,19 +1,15 @@
 package com.invexdijin.mspaymentgateway.application.core.usecase;
 
+import com.invexdijin.mspaymentgateway.adapters.out.client.BdTransactionClient;
+import com.invexdijin.mspaymentgateway.adapters.out.client.MsAntecedentReportClient;
+import com.invexdijin.mspaymentgateway.adapters.out.repository.ClientRepository;
+import com.invexdijin.mspaymentgateway.application.core.domain.Client;
 import com.invexdijin.mspaymentgateway.application.core.domain.PayRequest;
 import com.invexdijin.mspaymentgateway.application.core.domain.PayResponse;
 import com.invexdijin.mspaymentgateway.application.core.domain.ValidateSignatureResponse;
 import com.invexdijin.mspaymentgateway.application.core.exception.InternalServerException;
 import com.invexdijin.mspaymentgateway.application.ports.in.CreatePreferenceInputPort;
 import com.invexdijin.mspaymentgateway.application.ports.out.MapperCodedMethodOutPort;
-import com.mercadopago.MercadoPagoConfig;
-import com.mercadopago.client.preference.PreferenceBackUrlsRequest;
-import com.mercadopago.client.preference.PreferenceClient;
-import com.mercadopago.client.preference.PreferenceItemRequest;
-import com.mercadopago.client.preference.PreferenceRequest;
-import com.mercadopago.exceptions.MPApiException;
-import com.mercadopago.exceptions.MPException;
-import com.mercadopago.resources.preference.Preference;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,57 +26,26 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
 
     @Autowired
     private MapperCodedMethodOutPort mapperCodedMethodOutPort;
+
+    @Autowired
+    private ClientRepository clientRepository;
+
+    @Autowired
+    private BdTransactionClient bdTransactionClient;
+
+    @Autowired
+    private MsAntecedentReportClient msAntecedentReportClient;
+
     @Value("${access.token}")
     private String accessToken;
 
     @Value("${item.price}")
     private String itemPrice;
 
-    private static final String successEndpoint="http://localhost:4200/success";
-    private static final String pendingEndpoint="http://localhost:4200/pending";
-    private static final String failureEndpoint="http://localhost:4200/failure";
-    private static final String notifyEndpoint="https://localhost:4200/notify";
     @Override
-    public Preference createPreference() throws MPException, MPApiException {
-
-        Preference preference = null;
-        try{
-            MercadoPagoConfig.setAccessToken(accessToken);
-            PreferenceItemRequest itemRequest =
-                    PreferenceItemRequest.builder()
-                            .id("123")
-                            .title("Test")
-                            .description("Test")
-                            .pictureUrl("www.picture.com")
-                            .categoryId("1")
-                            .quantity(1)
-                            .currencyId("COL")
-                            .unitPrice(new BigDecimal(2000))
-                            .build();
-            List<PreferenceItemRequest> items = new ArrayList<>();
-            items.add(itemRequest);
-            PreferenceBackUrlsRequest backUrlsRequest =
-                    PreferenceBackUrlsRequest.builder()
-                            .success(successEndpoint)
-                            .pending(pendingEndpoint)
-                            .failure(failureEndpoint)
-                            .build();
-            PreferenceRequest preferenceRequest = PreferenceRequest.builder()
-                    .items(items)
-                    .backUrls(backUrlsRequest)
-                    //.autoReturn("approved")
-                    .notificationUrl(notifyEndpoint)
-                    .build();
-            PreferenceClient client = new PreferenceClient();
-            preference = client.create(preferenceRequest);
-            log.info("SandboxInitPoint--> "+preference.getSandboxInitPoint()+" or "+preference.getInitPoint());
-            //response = mapperResponseOutPort.mappingResponse(preference.getId());
-        }catch(Exception ex){
-            log.error("Preference can't be processed");
-            throw new InternalServerException("Preference can't be processed. additional errors: "+ex.getMessage());
-        }
-
-        return preference;
+    public Client createClient(Client client) {
+        client = clientRepository.save(client);
+        return client;
     }
 
     @Override
@@ -93,9 +58,9 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
         payRequest.setTax(3193L);
         payRequest.setTaxReturnBase(16806L);
         payRequest.setCurrency("COP");
-        payRequest.setTest(0);
+        payRequest.setTest(1);
         payRequest.setBuyerEmail("test@test.com");
-        payRequest.setResponseUrl("http://localhost:4200/success");
+        payRequest.setResponseUrl("http://localhost:4200/after-payment");
         payRequest.setConfirmationUrl("http://www.test.com/confirmation");
         String input = "4Vj8eK4rloUd272L48hsrarnUA"+"~"+
                 payRequest.getMerchantId()+"~"+
@@ -109,6 +74,8 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
 
     @Override
     public ValidateSignatureResponse validateSignature(PayResponse payResponse) throws NoSuchAlgorithmException {
+
+
         ValidateSignatureResponse validateSignatureResponse = new ValidateSignatureResponse();
         String result="";
         String rounding_tx_value = mapperCodedMethodOutPort.RoundHalfToEvent(payResponse.getTxValue());
@@ -121,6 +88,14 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
         String signatureResponse = mapperCodedMethodOutPort.mappingEncodedMethod(input);
         if(signatureResponse.equals(payResponse.getSignature()) || payResponse.getLapTransactionState().equals("APPROVED")){
             result="APPROVED";
+            //Haga actualizacion en la bd
+            Object genericObject = bdTransactionClient.updateTransaction(signatureResponse);
+            //Disparar micro de busqueda(buscapersonas/ antecedentes)
+            if(genericObject.equals("search-person")){
+                msAntecedentReportClient.requestSearchPerson(null);
+            }else{
+                msAntecedentReportClient.requestAntecedentReport(null);
+            }
         }
         else{
             result="DECLINED";

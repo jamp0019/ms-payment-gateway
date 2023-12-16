@@ -1,5 +1,6 @@
 package com.invexdijin.mspaymentgateway.adapters.in.controller;
 
+import com.invexdijin.mspaymentgateway.application.core.domain.Client;
 import com.invexdijin.mspaymentgateway.application.core.domain.PayRequest;
 import com.invexdijin.mspaymentgateway.application.core.domain.PayResponse;
 import com.invexdijin.mspaymentgateway.application.core.domain.ValidateSignatureResponse;
@@ -33,6 +34,13 @@ public class MercadoPagoController {
         //Preference preference = createPreferenceInputPort.createPreference();
         ValidateSignatureResponse response = createPreferenceInputPort.validateSignature(payResponse);
         return ResponseEntity.ok().body(response);
+    }
+
+    @RequestMapping(method = RequestMethod.POST, path = "/create-client")
+    ResponseEntity<?> createClient(@RequestBody Client client) {
+        Client clientResponse = createPreferenceInputPort.createClient(client);
+        log.info(client.getName()+" "+" save successfully");
+        return ResponseEntity.ok().body(clientResponse);
     }
 
 }
