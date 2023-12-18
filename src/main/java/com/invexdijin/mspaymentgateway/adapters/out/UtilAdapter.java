@@ -1,7 +1,11 @@
 package com.invexdijin.mspaymentgateway.adapters.out;
 
-import com.invexdijin.mspaymentgateway.application.core.domain.PayResponse;
-import com.invexdijin.mspaymentgateway.application.ports.out.MapperCodedMethodOutPort;
+import com.invexdijin.mspaymentgateway.adapters.out.client.MsAntecedentReportClient;
+import com.invexdijin.mspaymentgateway.application.core.domain.ConsolidatedResponse;
+import com.invexdijin.mspaymentgateway.application.core.domain.RequestSearch;
+import com.invexdijin.mspaymentgateway.application.ports.out.UtilOutPort;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -11,11 +15,26 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
 @Component
-public class MapperCodedMethodAdapter implements MapperCodedMethodOutPort {
-    @Override
-    public PayResponse mappingResponse(String preferenceId) {
+@Slf4j
+public class UtilAdapter implements UtilOutPort {
 
-        return null;
+    @Autowired
+    private MsAntecedentReportClient msAntecedentReportClient;
+
+    @Override
+    public ConsolidatedResponse consumeSearchMethod(String searchType, RequestSearch requestSearch) {
+        ConsolidatedResponse consolidatedResponse = null;
+        switch(searchType) {
+            case "0":
+                consolidatedResponse = msAntecedentReportClient.requestSearchPerson(requestSearch);
+                break;
+            case "1":
+                consolidatedResponse = msAntecedentReportClient.requestAntecedentReport(requestSearch);
+                break;
+            default:
+                log.info("Request invalid");
+        }
+        return consolidatedResponse;
     }
 
     @Override

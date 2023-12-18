@@ -1,5 +1,6 @@
 package com.invexdijin.mspaymentgateway.application.core.domain;
 
+import com.invexdijin.mspaymentgateway.application.core.domain.map.Geometry;
 import lombok.Data;
 
 @Data
@@ -15,4 +16,5 @@ public class ConsolidatedResponse {
     private String address;
     private String department;
     private String municipality;
+    private Geometry geometry;
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 import java.util.HashMap;
+import java.util.Map;
 
 @ControllerAdvice
 @Slf4j
@@ -38,9 +39,11 @@ public class HandlerException {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
-    @ExceptionHandler(InternalServerException.class)
+    @ExceptionHandler(InternalServerError.class)
     public ResponseEntity<?> internalRequestException(Exception ex){
-        log.error(ex.getMessage());
-        return ResponseEntity.internalServerError().body(ex.getMessage());
+        Map<String, Object> response = new HashMap<>();
+        response.put("message", "UPS! Unexpected error, contact system administrator");
+        log.error("Unexpected error: ".concat(ex.getMessage()));
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
