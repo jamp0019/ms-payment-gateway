@@ -64,7 +64,7 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
             payRequest.setCurrency("COP");
             payRequest.setTest(1);
             payRequest.setBuyerEmail(paymentReference.getPaymentEmail());
-            payRequest.setResponseUrl(responseUrl+paymentReference.getInitSearchId());
+            payRequest.setResponseUrl(responseUrl+paymentReference.getInitSearch().getId());
             payRequest.setConfirmationUrl(confirmationUrl);
             String input = apiKey+"~"+
                     payRequest.getMerchantId()+"~"+
@@ -97,14 +97,22 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
             if(signatureResponse.equals(payResponse.getSignature()) || payResponse.getLapTransactionState().equals("APPROVED")){
                 log.info("APPROVED");
                 //Haga actualizacion en la bd cuando el estado de la transacción es aprobada
-                Object genericObject = bdTransactionClient.updateTransaction(signatureResponse, "APPROVED");
+                PaymentReference paymentReference = bdTransactionClient.updatePayment(signatureResponse, "APPROVED");
+                RequestSearch requestSearch = new RequestSearch();
+                requestSearch.setPaymentName(paymentReference.getPaymentName());
+                requestSearch.setPaymentEmail(paymentReference.getPaymentEmail());
+                requestSearch.setSearchFullName(paymentReference.getInitSearch().getFullName());
+                requestSearch.setSearchName(paymentReference.getInitSearch().getFirstName());
+                requestSearch.setSearchLastName(paymentReference.getInitSearch().getLastName());
+                requestSearch.setDocumentType(paymentReference.getInitSearch().getDocumentType());
+                requestSearch.setDocumentNumber(paymentReference.getInitSearch().getDocumentNumber());
                 //Disparar micro de busqueda(buscapersonas/ antecedentes)
-                consolidatedResponse = utilOutPort.consumeSearchMethod("",null);
+                consolidatedResponse = utilOutPort.consumeSearchMethod(paymentReference.getInitSearch().getSearchType(),requestSearch);
             }
             else{
                 log.info("DECLINED");
                 //Haga actualizacion en la bd cuando el estado de la transacción es declinada
-                bdTransactionClient.updateTransaction(signatureResponse, "DECLINED");
+                bdTransactionClient.updatePayment(signatureResponse, "DECLINED");
             }
         } catch (Exception ex){
             log.error("Failed update with database or connection report services");

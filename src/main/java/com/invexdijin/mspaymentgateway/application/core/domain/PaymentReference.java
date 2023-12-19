@@ -63,6 +63,6 @@ public class PaymentReference {
     @NotNull(message = "init-search-id-message")
     @NotEmpty(message = "init-search-id-message")
     @NotBlank(message = "init-search-id-message")
-    private String initSearchId;
+    private InitSearch initSearch;
 
 }

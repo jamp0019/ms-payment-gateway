@@ -5,8 +5,11 @@ import lombok.Data;
 @Data
 public class RequestSearch {
 
-    private String name;
-    private String email;
+    private String paymentName;
+    private String paymentEmail;
+    private String searchFullName;
+    private String searchName;
+    private String searchLastName;
     private String documentType;
     private String documentNumber;
 
