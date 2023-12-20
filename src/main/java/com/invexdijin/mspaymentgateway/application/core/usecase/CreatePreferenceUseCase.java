@@ -52,7 +52,7 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
     }
 
     @Override
-    public PayRequest createPayuPayment(PaymentReference paymentReference) throws NoSuchAlgorithmException {
+    public PayRequest createPayuPayment(PaymentReference paymentReference) {
         PayRequest payRequest = new PayRequest();
         try{
             payRequest.setMerchantId(508029);
@@ -101,13 +101,13 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
                 RequestSearch requestSearch = new RequestSearch();
                 requestSearch.setPaymentName(paymentReference.getPaymentName());
                 requestSearch.setPaymentEmail(paymentReference.getPaymentEmail());
-                requestSearch.setSearchFullName(paymentReference.getInitSearch().getFullName());
+               /* requestSearch.setSearchFullName(paymentReference.getInitSearch().getFullName());
                 requestSearch.setSearchName(paymentReference.getInitSearch().getFirstName());
                 requestSearch.setSearchLastName(paymentReference.getInitSearch().getLastName());
                 requestSearch.setDocumentType(paymentReference.getInitSearch().getDocumentType());
                 requestSearch.setDocumentNumber(paymentReference.getInitSearch().getDocumentNumber());
                 //Disparar micro de busqueda(buscapersonas/ antecedentes)
-                consolidatedResponse = utilOutPort.consumeSearchMethod(paymentReference.getInitSearch().getSearchType(),requestSearch);
+                consolidatedResponse = utilOutPort.consumeSearchMethod(paymentReference.getInitSearch().getSearchType(),requestSearch);*/
             }
             else{
                 log.info("DECLINED");

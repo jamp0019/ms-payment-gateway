@@ -16,6 +16,6 @@ public interface BdTransactionClient {
     PaymentReference updatePayment(@RequestParam("signature") String signature,
                                       @RequestParam("status") String status);
 
-    @RequestMapping(method = RequestMethod.POST, value = "/api/v1/invexdijin/create-payment")
+    @RequestMapping(method = RequestMethod.POST, value = "/api/v1/invexdijin/create-client")
     String createTransaction(@RequestBody PaymentReference paymentReference);
 }

@@ -1,10 +1,12 @@
 package com.invexdijin.mspaymentgateway.application.core.domain;
 
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,7 +31,6 @@ public class PaymentReference {
     @Size(min = 4, message = "contact-mail-error-message-characters")
     private String paymentEmail;
 
-    @Email(message = "payment-document-type-error-message-valid")
     @NotNull(message = "payment-document-type-error-message")
     @NotEmpty(message = "payment-document-type-error-message")
     @NotBlank(message = "payment-document-type-error-message")
@@ -50,19 +51,10 @@ public class PaymentReference {
     @Pattern(regexp = "\\d+",message = "contact-number-message-number")
     private String paymentContact;
 
-    @NotNull(message = "payment-signature-message")
-    @NotEmpty(message = "payment-signature-message")
-    @NotBlank(message = "payment-signature-message")
     private String paymentSignature;
 
-    @NotNull(message = "payment-status-message")
-    @NotEmpty(message = "payment-status-message")
-    @NotBlank(message = "payment-status-message")
     private String paymentStatus;
 
-    @NotNull(message = "init-search-id-message")
-    @NotEmpty(message = "init-search-id-message")
-    @NotBlank(message = "init-search-id-message")
     private InitSearch initSearch;
 
 }

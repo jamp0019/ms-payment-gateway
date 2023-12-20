@@ -6,6 +6,7 @@ import jakarta.validation.Valid;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.security.NoSuchAlgorithmException;
@@ -20,7 +21,7 @@ public class MercadoPagoController {
     private CreatePreferenceInputPort createPreferenceInputPort;
 
     @RequestMapping(method = RequestMethod.POST, path = "/create-payu-payment")
-    ResponseEntity<?> createPayuMethodPayment(@Valid @RequestBody PaymentReference paymentReference) throws NoSuchAlgorithmException {
+    ResponseEntity<?> createPayuMethodPayment(@Validated @RequestBody PaymentReference paymentReference) throws NoSuchAlgorithmException {
         PayRequest payRequest = createPreferenceInputPort.createPayuPayment(paymentReference);
         log.info("Pay request has been created!!!");
         return ResponseEntity.ok().body(payRequest);
@@ -32,7 +33,7 @@ public class MercadoPagoController {
         return ResponseEntity.ok().body(response);
     }
 
-    @RequestMapping(method = RequestMethod.POST, path = "/create-payment")
+    @RequestMapping(method = RequestMethod.POST, path = "/create-client")
     ResponseEntity<?> createPayment(@Valid @RequestBody PaymentReference paymentReference) {
         String response = createPreferenceInputPort.createPayment(paymentReference);
         log.info(paymentReference.getPaymentName()+" "+" save successfully");
