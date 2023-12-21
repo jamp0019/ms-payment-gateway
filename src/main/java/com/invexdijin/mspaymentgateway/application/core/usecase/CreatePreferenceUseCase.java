@@ -97,17 +97,18 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
             if(signatureResponse.equals(payResponse.getSignature()) || payResponse.getLapTransactionState().equals("APPROVED")){
                 log.info("APPROVED");
                 //Haga actualizacion en la bd cuando el estado de la transacción es aprobada
-                PaymentReference paymentReference = bdTransactionClient.updatePayment(signatureResponse, "APPROVED");
+                PaymentReference paymentReference = bdTransactionClient.updatePayment(payResponse.getSignature(), "APPROVED");
                 RequestSearch requestSearch = new RequestSearch();
                 requestSearch.setPaymentName(paymentReference.getPaymentName());
                 requestSearch.setPaymentEmail(paymentReference.getPaymentEmail());
-               /* requestSearch.setSearchFullName(paymentReference.getInitSearch().getFullName());
+                requestSearch.setSearchFullName(paymentReference.getInitSearch().getFullName());
                 requestSearch.setSearchName(paymentReference.getInitSearch().getFirstName());
                 requestSearch.setSearchLastName(paymentReference.getInitSearch().getLastName());
                 requestSearch.setDocumentType(paymentReference.getInitSearch().getDocumentType());
                 requestSearch.setDocumentNumber(paymentReference.getInitSearch().getDocumentNumber());
                 //Disparar micro de busqueda(buscapersonas/ antecedentes)
-                consolidatedResponse = utilOutPort.consumeSearchMethod(paymentReference.getInitSearch().getSearchType(),requestSearch);*/
+                consolidatedResponse = utilOutPort.consumeSearchMethod(paymentReference.getInitSearch().getSearchType(),requestSearch);
+                consolidatedResponse.setTransStatus(payResponse.getLapTransactionState());
             }
             else{
                 log.info("DECLINED");

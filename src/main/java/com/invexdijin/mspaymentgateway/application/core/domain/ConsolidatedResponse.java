@@ -17,4 +17,5 @@ public class ConsolidatedResponse {
     private String department;
     private String municipality;
     private Geometry geometry;
+    private String transStatus;
 }

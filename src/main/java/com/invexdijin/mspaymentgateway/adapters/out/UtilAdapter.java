@@ -25,10 +25,10 @@ public class UtilAdapter implements UtilOutPort {
     public ConsolidatedResponse consumeSearchMethod(String searchType, RequestSearch requestSearch) {
         ConsolidatedResponse consolidatedResponse = null;
         switch(searchType) {
-            case "0":
+            case "people":
                 consolidatedResponse = msAntecedentReportClient.requestSearchPerson(requestSearch);
                 break;
-            case "1":
+            case "judicial":
                 consolidatedResponse = msAntecedentReportClient.requestAntecedentReport(requestSearch);
                 break;
             default:
