@@ -1,0 +1,74 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ms-payment-gateway
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: ms-payment-gateway
+  template:
+    metadata:
+      labels:
+        app: ms-payment-gateway
+    spec:
+      containers:
+        - name: ms-payment-gateway
+          image: docker.io/jamp1992/ms-payment-gateway:v1
+          env:
+            - name: ACCESS_TOKEN
+              value: TEST-3646189138608415-120216-9622114fbecb7d017cdb967f65283ee3-1527749756
+            - name: API_KEY
+              value: 4Vj8eK4rloUd272L48hsrarnUA
+            - name: RESPONSE_URL
+              value: http://localhost:4200/after-payment/
+            - name: CONFIRMATION_URL
+              value: http://localhost:4200/after-payment/
+            - name: ITEM_PRICE
+              value: "1000"
+          readinessProbe:
+            failureThreshold: 10
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            httpGet:
+              httpHeaders:
+                - name: Accept
+                  value: application/json
+              path: /actuator/health/readiness
+              port: 8080
+              scheme: HTTP
+#          imagePullPolicy: Always
+#          ports:
+#            - containerPort: 8080
+#              protocol: TCP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-payment-gateway
+spec:
+  type: ClusterIP
+  selector:
+    app: ms-payment-gateway
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ms-payment-gateway-external
+spec:
+  type: LoadBalancer
+  selector:
+    app: ms-payment-gateway
+  ports:
+    - name: http
+      protocol: TCP
+      port: 80
+      targetPort: 8080

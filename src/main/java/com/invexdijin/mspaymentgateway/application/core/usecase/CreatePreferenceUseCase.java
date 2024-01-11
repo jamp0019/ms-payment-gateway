@@ -96,7 +96,7 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
 
             if(signatureResponse.equals(payResponse.getSignature()) || payResponse.getLapTransactionState().equals("APPROVED")){
                 log.info("APPROVED");
-                //Haga actualizacion en la bd cuando el estado de la transacción es aprobada
+                /*//Haga actualizacion en la bd cuando el estado de la transacción es aprobada
                 PaymentReference paymentReference = bdTransactionClient.updatePayment(payResponse.getSignature(), "APPROVED");
                 RequestSearch requestSearch = new RequestSearch();
                 requestSearch.setPaymentName(paymentReference.getPaymentName());
@@ -108,6 +108,16 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
                 requestSearch.setDocumentNumber(paymentReference.getInitSearch().getDocumentNumber());
                 //Disparar micro de busqueda(buscapersonas/ antecedentes)
                 consolidatedResponse = utilOutPort.consumeSearchMethod(paymentReference.getInitSearch().getSearchType(),requestSearch);
+                consolidatedResponse.setTransStatus(payResponse.getLapTransactionState());*/
+                RequestSearch requestSearch = new RequestSearch();
+                requestSearch.setPaymentName("John Martinez");
+                requestSearch.setPaymentEmail("john1992alex@gmail.com");
+                requestSearch.setSearchFullName("John Alexander Martinez Pinto");
+                requestSearch.setSearchName("John Alexander");
+                requestSearch.setSearchLastName("Martinez Pinto");
+                requestSearch.setDocumentType("CC");
+                requestSearch.setDocumentNumber("1024530679");
+                consolidatedResponse = utilOutPort.consumeSearchMethod("judicial",requestSearch);
                 consolidatedResponse.setTransStatus(payResponse.getLapTransactionState());
             }
             else{
