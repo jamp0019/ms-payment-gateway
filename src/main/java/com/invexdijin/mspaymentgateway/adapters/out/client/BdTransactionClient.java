@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Map;
 
+/*@FeignClient(value = "bd-transaction",
+        url = "http://bd-transaction:80")*/
 @FeignClient(value = "bd-transaction",
         url = "http://localhost:8082")
 public interface BdTransactionClient {

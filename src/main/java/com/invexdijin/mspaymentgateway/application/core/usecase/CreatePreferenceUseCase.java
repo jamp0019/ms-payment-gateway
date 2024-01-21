@@ -82,7 +82,7 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
 
     @Override
     public ConsolidatedResponse validateSignature(PayResponse payResponse) throws NoSuchAlgorithmException {
-
+        log.info("Se valida signature");
         ConsolidatedResponse consolidatedResponse=null;
         try{
             String rounding_tx_value = utilOutPort.RoundHalfToEvent(payResponse.getTxValue());
@@ -96,8 +96,8 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
 
             if(signatureResponse.equals(payResponse.getSignature()) || payResponse.getLapTransactionState().equals("APPROVED")){
                 log.info("APPROVED");
-                /*//Haga actualizacion en la bd cuando el estado de la transacción es aprobada
-                PaymentReference paymentReference = bdTransactionClient.updatePayment(payResponse.getSignature(), "APPROVED");
+                //Haga actualizacion en la bd cuando el estado de la transacción es aprobada
+                PaymentReference paymentReference = bdTransactionClient.updatePayment(payResponse.getReferenceCode(), "APPROVED");
                 RequestSearch requestSearch = new RequestSearch();
                 requestSearch.setPaymentName(paymentReference.getPaymentName());
                 requestSearch.setPaymentEmail(paymentReference.getPaymentEmail());
@@ -108,8 +108,8 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
                 requestSearch.setDocumentNumber(paymentReference.getInitSearch().getDocumentNumber());
                 //Disparar micro de busqueda(buscapersonas/ antecedentes)
                 consolidatedResponse = utilOutPort.consumeSearchMethod(paymentReference.getInitSearch().getSearchType(),requestSearch);
-                consolidatedResponse.setTransStatus(payResponse.getLapTransactionState());*/
-                RequestSearch requestSearch = new RequestSearch();
+                consolidatedResponse.setTransStatus(payResponse.getLapTransactionState());
+                /*RequestSearch requestSearch = new RequestSearch();
                 requestSearch.setPaymentName("John Martinez");
                 requestSearch.setPaymentEmail("john1992alex@gmail.com");
                 requestSearch.setSearchFullName("John Alexander Martinez Pinto");
@@ -118,7 +118,7 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
                 requestSearch.setDocumentType("CC");
                 requestSearch.setDocumentNumber("1024530679");
                 consolidatedResponse = utilOutPort.consumeSearchMethod("judicial",requestSearch);
-                consolidatedResponse.setTransStatus(payResponse.getLapTransactionState());
+                consolidatedResponse.setTransStatus(payResponse.getLapTransactionState());*/
             }
             else{
                 log.info("DECLINED");
