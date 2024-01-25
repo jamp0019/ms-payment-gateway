@@ -40,6 +40,30 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
     @Value("${confirmation.url}")
     private String confirmationUrl;
 
+    @Value("${merchant.id}")
+    private Integer merchantId;
+
+    @Value("${account.id}")
+    private Integer accountId;
+
+    @Value("${description}")
+    private String description;
+
+    @Value("${amount}")
+    private Long amount;
+
+    @Value("${tax}")
+    private Long tax;
+
+    @Value("${tax.return.base}")
+    private Long taxReturnBase;
+
+    @Value("${currency}")
+    private String currency;
+
+    @Value("${test.property}")
+    private Integer testProperty;
+
     @Override
     public String createPayment(PaymentReference paymentReference) {
         try{
@@ -55,14 +79,14 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
     public PayRequest createPayuPayment(PaymentReference paymentReference) {
         PayRequest payRequest = new PayRequest();
         try{
-            payRequest.setMerchantId(508029);
-            payRequest.setAccountId(512321);
-            payRequest.setDescription("Test PAYU");
-            payRequest.setAmount(20000L);
-            payRequest.setTax(3193L);
-            payRequest.setTaxReturnBase(16806L);
-            payRequest.setCurrency("COP");
-            payRequest.setTest(1);
+            payRequest.setMerchantId(merchantId);
+            payRequest.setAccountId(accountId);
+            payRequest.setDescription(description);
+            payRequest.setAmount(amount);
+            payRequest.setTax(tax);
+            payRequest.setTaxReturnBase(taxReturnBase);
+            payRequest.setCurrency(currency);
+            payRequest.setTest(testProperty);
             payRequest.setBuyerEmail(paymentReference.getPaymentEmail());
             payRequest.setResponseUrl(responseUrl+paymentReference.getInitSearch().getId());
             payRequest.setConfirmationUrl(confirmationUrl);
@@ -109,16 +133,7 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
                 //Disparar micro de busqueda(buscapersonas/ antecedentes)
                 consolidatedResponse = utilOutPort.consumeSearchMethod(paymentReference.getInitSearch().getSearchType(),requestSearch);
                 consolidatedResponse.setTransStatus(payResponse.getLapTransactionState());
-                /*RequestSearch requestSearch = new RequestSearch();
-                requestSearch.setPaymentName("John Martinez");
-                requestSearch.setPaymentEmail("john1992alex@gmail.com");
-                requestSearch.setSearchFullName("John Alexander Martinez Pinto");
-                requestSearch.setSearchName("John Alexander");
-                requestSearch.setSearchLastName("Martinez Pinto");
-                requestSearch.setDocumentType("CC");
-                requestSearch.setDocumentNumber("1024530679");
-                consolidatedResponse = utilOutPort.consumeSearchMethod("judicial",requestSearch);
-                consolidatedResponse.setTransStatus(payResponse.getLapTransactionState());*/
+
             }
             else{
                 log.info("DECLINED");

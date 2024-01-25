@@ -7,12 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Map;
-
-/*@FeignClient(value = "bd-transaction",
-        url = "http://bd-transaction:80")*/
 @FeignClient(value = "bd-transaction",
-        url = "http://localhost:8082")
+        url = "${bd.transaction}")
 public interface BdTransactionClient {
     @RequestMapping(method = RequestMethod.PUT, value = "/api/v1/invexdijin/update-payment")
     PaymentReference updatePayment(@RequestParam("signature") String signature,

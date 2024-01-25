@@ -7,10 +7,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-/*@FeignClient(value = "ms-antecedent-report",
-        url = "http://ms-antecedent-report:80")*/
 @FeignClient(value = "ms-antecedent-report",
-        url = "http://localhost:8080")
+        url = "${ms.antecedent.report}")
 public interface MsAntecedentReportClient {
 
     @RequestMapping(method = RequestMethod.POST, value = "/api/v1/invexdijin/search-person-report")
