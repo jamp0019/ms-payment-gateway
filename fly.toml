@@ -1,0 +1,40 @@
+# fly.toml app configuration file generated for ms-payment-gateway-v1 on 2024-02-02T12:13:53-05:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = "ms-payment-gateway-v1"
+primary_region = "bog"
+
+[build]
+  image = "jamp1992/ms-payment-gateway:v6"
+
+[env]
+  ACCESS_TOKEN = "TEST-3646189138608415-120216-9622114fbecb7d017cdb967f65283ee3-1527749756"
+  ACCOUNT_ID = "512321"
+  AMOUNT = "20000"
+  API_KEY = "4Vj8eK4rloUd272L48hsrarnUA"
+  BD_TRANSACTION = "http://bd-transaction-v1.internal:8080"
+  CONFIRMATION_URL = "https://invexdijin.com/#/after-payment/"
+  CURRENCY = "COP"
+  DESCRIPTION = "TestPAYU"
+  ITEM_PRICE = "1000"
+  MERCHANT_ID = "508029"
+  MS_ANTECEDENT_REPORT = "http://ms-antecedent-report-v1.internal:8080"
+  RESPONSE_URL = "https://invexdijin.com/#/after-payment/"
+  TAX = "3193"
+  TAX_RETURN_BASE = "16806"
+  TEST_PROPERTY = "1"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = false
+  auto_start_machines = false
+  min_machines_running = 1
+  processes = ["app"]
+
+[[vm]]
+  cpu_kind = "shared"
+  cpus = 1
+  memory_mb = 512

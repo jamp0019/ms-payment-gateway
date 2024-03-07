@@ -90,6 +90,7 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
             payRequest.setBuyerEmail(paymentReference.getPaymentEmail());
             payRequest.setResponseUrl(responseUrl+paymentReference.getInitSearch().getId());
             payRequest.setConfirmationUrl(confirmationUrl);
+            payRequest.setReferenceCode(paymentReference.getInitSearch().getId());
             String input = apiKey+"~"+
                     payRequest.getMerchantId()+"~"+
                     payRequest.getReferenceCode()+"~"+

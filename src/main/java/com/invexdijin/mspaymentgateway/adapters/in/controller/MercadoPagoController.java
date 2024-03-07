@@ -13,7 +13,6 @@ import java.security.NoSuchAlgorithmException;
 
 @RestController
 @RequestMapping("/api/v1/invexdijin")
-@CrossOrigin(origins = "http://localhost:4200", maxAge = 3600)
 @Slf4j
 public class MercadoPagoController {
 

@@ -21,8 +21,8 @@ public class PayRequest {
     private String responseUrl;
     private String confirmationUrl;
 
-    public PayRequest(){
+    /*public PayRequest(){
         this.referenceCode= String.valueOf(UUID.randomUUID());
-    }
+    }*/
 
 }
