@@ -49,15 +49,23 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
     @Value("${description}")
     private String description;
 
-    @Value("${amount}")
-    private Long amount;
+    @Value("${amount.search.person}")
+    private Long amountSearchPerson;
 
-    @Value("${tax}")
-    private Long tax;
+    @Value("${tax.search.person}")
+    private Long taxSearchPerson;
 
-    @Value("${tax.return.base}")
-    private Long taxReturnBase;
+    @Value("${tax.return.base.search.person}")
+    private Long taxReturnBaseSearchPerson;
 
+    @Value("${amount.antecedent.report}")
+    private Long amountAntecedentReport;
+
+    @Value("${tax.antecedent.report}")
+    private Long taxAntecedentReport;
+
+    @Value("${tax.return.base.antecedent.report}")
+    private Long taxReturnBaseAntecedentReport;
     @Value("${currency}")
     private String currency;
 
@@ -77,14 +85,21 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
 
     @Override
     public PayRequest createPayuPayment(PaymentReference paymentReference) {
+        log.info(paymentReference.getInitSearch().toString());
         PayRequest payRequest = new PayRequest();
         try{
             payRequest.setMerchantId(merchantId);
             payRequest.setAccountId(accountId);
             payRequest.setDescription(description);
-            payRequest.setAmount(amount);
-            payRequest.setTax(tax);
-            payRequest.setTaxReturnBase(taxReturnBase);
+            if(paymentReference.getInitSearch().getSearchType().equals("people")){
+                payRequest.setAmount(amountSearchPerson);
+                payRequest.setTax(taxSearchPerson);
+                payRequest.setTaxReturnBase(taxReturnBaseSearchPerson);
+            } else {
+                payRequest.setAmount(amountAntecedentReport);
+                payRequest.setTax(taxAntecedentReport);
+                payRequest.setTaxReturnBase(taxReturnBaseAntecedentReport);
+            }
             payRequest.setCurrency(currency);
             payRequest.setTest(testProperty);
             payRequest.setBuyerEmail(paymentReference.getPaymentEmail());

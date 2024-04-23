@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.util.Date;
+import java.util.List;
 
 @Data
 public class PayResponse {
@@ -51,7 +52,7 @@ public class PayResponse {
     private String pseReference1;
     private String pseReference2;
     private String pseReference3;
-    private String authorizationCode;
+    private Object authorizationCode;
     @JsonProperty("TX_ADMINISTRATIVE_FEE")
     private String txAdministrativeFee;
     @JsonProperty("TX_TAX_ADMINISTRATIVE_FEE")

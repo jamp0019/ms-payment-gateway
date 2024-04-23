@@ -22,7 +22,7 @@ public class PayRequest {
     private String confirmationUrl;
 
     /*public PayRequest(){
-        this.referenceCode= String.valueOf(UUID.randomUUID());
+            this.referenceCode= String.valueOf(UUID.randomUUID());
     }*/
 
 }
