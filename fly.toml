@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for ms-payment-gateway-v1 on 2024-04-23T10:47:59-05:00
+# fly.toml app configuration file generated for ms-payment-gateway-v1 on 2024-05-20T09:30:44-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -7,7 +7,7 @@ app = 'ms-payment-gateway-v1'
 primary_region = 'bog'
 
 [build]
-  image = 'jamp1992/ms-payment-gateway:v11'
+  image = 'jamp1992/ms-payment-gateway:v12'
 
 [env]
   ACCESS_TOKEN = 'TEST-3646189138608415-120216-9622114fbecb7d017cdb967f65283ee3-1527749756'
@@ -18,7 +18,7 @@ primary_region = 'bog'
   BD_TRANSACTION = 'http://bd-transaction-v1.internal:8080'
   CONFIRMATION_URL = 'https://invexdijin.com/#/after-payment/'
   CURRENCY = 'COP'
-  DESCRIPTION = 'TestPAYU'
+  DESCRIPTION = 'Invexdijin'
   ITEM_PRICE = '1000'
   MERCHANT_ID = '1006279'
   MS_ANTECEDENT_REPORT = 'http://ms-antecedent-report-v1.internal:8080'

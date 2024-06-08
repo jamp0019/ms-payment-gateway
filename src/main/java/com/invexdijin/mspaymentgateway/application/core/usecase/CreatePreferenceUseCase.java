@@ -133,7 +133,7 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
                     payResponse.getCurrency() +"~"+
                     payResponse.getTransactionState();
             String signatureResponse = utilOutPort.mappingEncodedMethod(input);
-
+            //
             if(signatureResponse.equals(payResponse.getSignature()) || payResponse.getLapTransactionState().equals("APPROVED")){
                 log.info("APPROVED");
                 //Haga actualizacion en la bd cuando el estado de la transacción es aprobada
