@@ -10,6 +10,7 @@ import java.util.List;
 public class PayResponse {
 
     private Integer merchantId;
+
     @JsonProperty("merchant_name")
     private String merchantName;
     @JsonProperty("merchant_address")
@@ -17,10 +18,16 @@ public class PayResponse {
     private String telephone;
     @JsonProperty("merchant_url")
     private String merchantUrl;
+
     private String transactionState;
+    private Integer statePol;
+
     private String lapTransactionState;
     private String message;
+
     private String referenceCode;
+    private String referenceSale;
+
     @JsonProperty("reference_pol")
     private String referencePol;
     private String transactionId;
@@ -40,11 +47,16 @@ public class PayResponse {
     private String polPaymentMethodType;
     private String lapPaymentMethodType;
     private String installmentsNumber;
+
     @JsonProperty("TX_VALUE")
     private String txValue;
+    private Double value;
+
     @JsonProperty("TX_TAX")
     private String txTax;
+
     private String currency;
+
     private String lng;
     private String pseCycle;
     private String buyerEmail;

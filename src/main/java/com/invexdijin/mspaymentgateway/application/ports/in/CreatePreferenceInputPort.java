@@ -8,5 +8,8 @@ public interface CreatePreferenceInputPort {
     String createPayment(PaymentReference paymentReference);
     PayRequest createPayuPayment(PaymentReference paymentReference) throws NoSuchAlgorithmException;
 
-    ConsolidatedResponse validateSignature(PayResponse payResponse) throws NoSuchAlgorithmException;
+    ConsolidatedResponse responseValidateSignature(PayResponse payResponse) throws NoSuchAlgorithmException;
+
+    void notificationValidateSignature(PayNotification payNotification) throws NoSuchAlgorithmException;
 }
+
