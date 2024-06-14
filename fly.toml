@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for ms-payment-gateway-v1 on 2024-05-20T09:30:44-05:00
+# fly.toml app configuration file generated for ms-payment-gateway-v1 on 2024-06-13T19:11:07-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -7,20 +7,21 @@ app = 'ms-payment-gateway-v1'
 primary_region = 'bog'
 
 [build]
-  image = 'jamp1992/ms-payment-gateway:v12'
+  image = 'jamp1992/ms-payment-gateway:v13'
 
 [env]
   ACCESS_TOKEN = 'TEST-3646189138608415-120216-9622114fbecb7d017cdb967f65283ee3-1527749756'
-  ACCOUNT_ID = '1015033'
+  ACCOUNT_ID = '512321'
+  ADMIN_REDIS = 'http://admin-redis-info-payment.internal:8080'
   AMOUNT_ANTECEDENT_REPORT = '23789'
   AMOUNT_SEARCH_PERSON = '11889'
-  API_KEY = '37zYaBtoMWAM253MoOy29bS5Th'
+  API_KEY = '4Vj8eK4rloUd272L48hsrarnUA'
   BD_TRANSACTION = 'http://bd-transaction-v1.internal:8080'
-  CONFIRMATION_URL = 'https://invexdijin.com/#/after-payment/'
+  CONFIRMATION_URL = 'https://ms-payment-gateway-v1.fly.dev/api/v1/invexdijin/notification-pay'
   CURRENCY = 'COP'
   DESCRIPTION = 'Invexdijin'
   ITEM_PRICE = '1000'
-  MERCHANT_ID = '1006279'
+  MERCHANT_ID = '508029'
   MS_ANTECEDENT_REPORT = 'http://ms-antecedent-report-v1.internal:8080'
   RESPONSE_URL = 'https://invexdijin.com/#/after-payment/'
   TAX_ANTECEDENT_REPORT = '3799'
