@@ -1,4 +1,4 @@
-# fly.toml app configuration file generated for ms-payment-gateway-v1 on 2024-06-13T19:11:07-05:00
+# fly.toml app configuration file generated for ms-payment-gateway-v1 on 2024-06-14T16:49:01-05:00
 #
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
@@ -7,7 +7,7 @@ app = 'ms-payment-gateway-v1'
 primary_region = 'bog'
 
 [build]
-  image = 'jamp1992/ms-payment-gateway:v13'
+  image = 'jamp1992/ms-payment-gateway:v14'
 
 [env]
   ACCESS_TOKEN = 'TEST-3646189138608415-120216-9622114fbecb7d017cdb967f65283ee3-1527749756'

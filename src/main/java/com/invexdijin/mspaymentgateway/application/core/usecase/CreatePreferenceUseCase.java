@@ -140,6 +140,7 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
             //
             if(signatureResponse.equals(payResponse.getSignature()) || payResponse.getLapTransactionState().equals("APPROVED")){
                 log.info("APPROVED");
+                bdTransactionClient.updatePayment(payResponse.getReferenceSale(), "APPROVED");
                 consolidatedResponse = adminRedisInfoClient.getInfoIntoRedis(payResponse.getSignature());
             }
             else{
@@ -171,7 +172,7 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
             if(signatureResponse.equals(payNotification.getSign()) || payNotification.getResponseMessagePol().equals("APPROVED")){
                 log.info("APPROVED");
                 //Haga actualizacion en la bd cuando el estado de la transacción es aprobada
-                PaymentReference paymentReference = bdTransactionClient.updatePayment(payNotification.getReferenceSale(), "APPROVED");
+                PaymentReference paymentReference = bdTransactionClient.updatePayment(payNotification.getReferenceSale(), "APPROVED-SE");
                 RequestSearch requestSearch = new RequestSearch();
                 requestSearch.setPaymentName(paymentReference.getPaymentName());
                 requestSearch.setPaymentEmail(paymentReference.getPaymentEmail());
