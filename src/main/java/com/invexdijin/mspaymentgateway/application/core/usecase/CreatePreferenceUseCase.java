@@ -10,6 +10,7 @@ import com.invexdijin.mspaymentgateway.application.ports.out.UtilOutPort;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import java.security.NoSuchAlgorithmException;
 
@@ -117,6 +118,7 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
                     payRequest.getCurrency();
             String signature = utilOutPort.mappingEncodedMethod(input);
             payRequest.setSignature(signature);
+            log.info("PayRequest Object --> "+payRequest);
         }catch (Exception ex){
             log.error("Failed mapping pay request");
             throw new InternalServerError(ex.getMessage());
@@ -126,7 +128,7 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
 
     @Override
     public ConsolidatedResponse responseValidateSignature(PayResponse payResponse) throws NoSuchAlgorithmException {
-        log.info("Se valida signature");
+        log.info("Validating signature. Response URL");
         ConsolidatedResponse consolidatedResponse=null;
         try{
             String rounding_tx_value = utilOutPort.RoundHalfToEvent(payResponse.getTxValue());
@@ -138,15 +140,19 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
                     payResponse.getTransactionState();
             String signatureResponse = utilOutPort.mappingEncodedMethod(input);
             //
-            if(signatureResponse.equals(payResponse.getSignature()) || payResponse.getLapTransactionState().equals("APPROVED")){
-                log.info("APPROVED");
-                bdTransactionClient.updatePayment(payResponse.getReferenceSale(), "APPROVED");
-                consolidatedResponse = adminRedisInfoClient.getInfoIntoRedis(payResponse.getSignature());
-            }
-            else{
-                log.info("DECLINED");
-                //Haga actualizacion en la bd cuando el estado de la transacción es declinada
-                bdTransactionClient.updatePayment(signatureResponse, "DECLINED");
+            if(signatureResponse.equals(payResponse.getSignature())){
+                log.info("Signature is valid. Response URL.");
+                if(payResponse.getLapTransactionState().equals("APPROVED")){
+                    log.info("APPROVED Response");
+                    log.info("PayResponse Object -->"+payResponse.toString());
+                    bdTransactionClient.updatePayment(payResponse.getReferenceCode(), "APPROVED");
+                    consolidatedResponse = adminRedisInfoClient.getInfoIntoRedis(payResponse.getSignature());
+                }
+                else{
+                    log.info("DECLINED");
+                    //Haga actualizacion en la bd cuando el estado de la transacción es declinada
+                    bdTransactionClient.updatePayment(signatureResponse, "DECLINED");
+                }
             }
         } catch (Exception ex){
             log.error("Failed update with database or connection report services");
@@ -157,7 +163,7 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
 
     @Override
     public void notificationValidateSignature(PayNotification payNotification) throws NoSuchAlgorithmException {
-        log.info("Se valida signature");
+        log.info("Validating signature. Notification URL");
         ConsolidatedResponse consolidatedResponse=null;
         try{
             String rounding_tx_value = utilOutPort.RoundHalfToEvent(String.valueOf(payNotification.getValue()));
@@ -169,29 +175,34 @@ public class CreatePreferenceUseCase implements CreatePreferenceInputPort {
                     payNotification.getStatePol();
             String signatureResponse = utilOutPort.mappingEncodedMethod(input);
             //
-            if(signatureResponse.equals(payNotification.getSign()) || payNotification.getResponseMessagePol().equals("APPROVED")){
-                log.info("APPROVED");
-                //Haga actualizacion en la bd cuando el estado de la transacción es aprobada
-                PaymentReference paymentReference = bdTransactionClient.updatePayment(payNotification.getReferenceSale(), "APPROVED-SE");
-                RequestSearch requestSearch = new RequestSearch();
-                requestSearch.setPaymentName(paymentReference.getPaymentName());
-                requestSearch.setPaymentEmail(paymentReference.getPaymentEmail());
-                requestSearch.setSearchFullName(paymentReference.getInitSearch().getFullName());
-                requestSearch.setSearchName(paymentReference.getInitSearch().getFirstName());
-                requestSearch.setSearchLastName(paymentReference.getInitSearch().getLastName());
-                requestSearch.setDocumentType(paymentReference.getInitSearch().getDocumentType());
-                requestSearch.setDocumentNumber(paymentReference.getInitSearch().getDocumentNumber());
-                //Disparar micro de busqueda(buscapersonas/ antecedentes)
-                consolidatedResponse = utilOutPort.consumeSearchMethod(paymentReference.getInitSearch().getSearchType(),requestSearch);
-                consolidatedResponse.setTransStatus(payNotification.getResponseMessagePol());
-                adminRedisInfoClient.createInfoIntoRedis(payNotification.getSign(), consolidatedResponse);
-                log.info("ConsolidatedResponse Object has been saved");
+            if(signatureResponse.equals(payNotification.getSign())){
+                log.info("signature is valid. Notification URL.");
+                if(payNotification.getResponseMessagePol().equals("APPROVED")){
+                    log.info("APPROVED Notification");
+                    log.info("PayNotification Object -->"+payNotification.toString());
+                    //Haga actualizacion en la bd cuando el estado de la transacción es aprobada
+                    PaymentReference paymentReference = bdTransactionClient.updatePayment(payNotification.getReferenceSale(), "APPROVED-SE");
+                    RequestSearch requestSearch = new RequestSearch();
+                    requestSearch.setPaymentName(paymentReference.getPaymentName());
+                    requestSearch.setPaymentEmail(paymentReference.getPaymentEmail());
+                    requestSearch.setSearchFullName(paymentReference.getInitSearch().getFullName());
+                    requestSearch.setSearchName(paymentReference.getInitSearch().getFirstName());
+                    requestSearch.setSearchLastName(paymentReference.getInitSearch().getLastName());
+                    requestSearch.setDocumentType(paymentReference.getInitSearch().getDocumentType());
+                    requestSearch.setDocumentNumber(paymentReference.getInitSearch().getDocumentNumber());
+                    //Disparar micro de busqueda(buscapersonas/ antecedentes)
+                    consolidatedResponse = utilOutPort.consumeSearchMethod(paymentReference.getInitSearch().getSearchType(),requestSearch);
+                    consolidatedResponse.setTransStatus(payNotification.getResponseMessagePol());
+                    adminRedisInfoClient.createInfoIntoRedis(payNotification.getSign(), consolidatedResponse);
+                    log.info("ConsolidatedResponse Object has been saved");
+                }
+                else{
+                    log.info("DECLINED");
+                    //Haga actualizacion en la bd cuando el estado de la transacción es declinada
+                    bdTransactionClient.updatePayment(signatureResponse, "DECLINED");
+                }
             }
-            else{
-                log.info("DECLINED");
-                //Haga actualizacion en la bd cuando el estado de la transacción es declinada
-                bdTransactionClient.updatePayment(signatureResponse, "DECLINED");
-            }
+
         } catch (Exception ex){
             log.error("Failed update with database or connection report services");
             throw new InternalServerError(ex.getMessage());

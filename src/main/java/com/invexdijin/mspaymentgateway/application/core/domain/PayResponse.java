@@ -26,7 +26,6 @@ public class PayResponse {
     private String message;
 
     private String referenceCode;
-    private String referenceSale;
 
     @JsonProperty("reference_pol")
     private String referencePol;
